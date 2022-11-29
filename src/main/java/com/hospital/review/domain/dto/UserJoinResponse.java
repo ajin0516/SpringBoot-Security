@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class UserJoinResponse {
 
+    // result는 보안으로 인해 password 제외하고 출력
     private String userName;
     private String email;
 
