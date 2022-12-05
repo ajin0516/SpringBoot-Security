@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionManager {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> runtimeExceptionHandler(RuntimeException e) {
+        // RuntimeException 이 나면 controller 대시 이곳에서 리턴함
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Response.error(e.getMessage()));
+        // INTERNAL_SERVER_ERROR 를 리턴하고 ResponseBody 에 e.getMessage()를 추가해서 보냄
     }
 
     @ExceptionHandler(HospitalReviewAppException.class)
