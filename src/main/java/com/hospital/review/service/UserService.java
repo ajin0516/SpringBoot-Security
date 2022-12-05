@@ -39,6 +39,11 @@ public class UserService {
 //                    throw new RuntimeException("해당 UserName은 중복입니다.");
 //                });
 
+//        userRepository.findByUserName(request.getUserName())
+//                .ifPresent(user ->{
+//                    throw new HospitalReviewAppException(ErrorCode.DUPLICATED_USER_NAME, "DB에 " + request.getUserName() + "으로 검색 했을 때 빈 값이 아닙니다.");
+//                });
+
         userRepository.findByUserName(request.getUserName())
                 .ifPresent(user ->{
                     throw new HospitalReviewAppException(ErrorCode.DUPLICATED_USER_NAME,
@@ -58,16 +63,21 @@ public class UserService {
     public String login(String userName, String password){
         // userName 있는지 여부 확인
         // 없으면 not found 에러
-        User user = userRepository.findByUserName(userName).orElseThrow(
-                () -> new HospitalReviewAppException(ErrorCode.NOT_FOUND, String.format("%s는 가입된적이 없습니다", userName)));
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new HospitalReviewAppException(ErrorCode.NOT_FOUND, String.format("%s는 가입된적이 없습니다", userName)));
 
         // password 있는지 여부 확인
        if(! encoder.matches(password, user.getPassword())){
            throw new HospitalReviewAppException(ErrorCode.INVALID_PASSWORD,String.format("userName 또는 password가 잘못됐습니다"));
        }
 
+
         // 두가지 확인 중 예외 만났으면 Token 발행
         return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
     }
 
+    public User getUserByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new HospitalReviewAppException(ErrorCode.NOT_FOUND, ""));
+    }
 }
